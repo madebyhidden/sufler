@@ -48,14 +48,24 @@ def highpass(x, cutoff):
 chords = [[57, 60, 64], [53, 57, 60], [48, 52, 55, 60], [55, 59, 62]]
 bass_roots = [45, 41, 48, 43]
 bar = 4 * BEAT
+# Вся музыка стоит на одной сетке: первая сильная доля — в момент смены сцены 3.2 с,
+# от неё считаются и доли, и такты, и смена аккордов (иначе ударные, бас и подушка расходятся)
+ANCHOR = 3.2
+
+
+def bar_of(t):
+    return int(np.floor((t - ANCHOR) / bar + 1e-6)) % 4
 
 # Подушка: мягкая пила с расстройкой, сглаженная
 t_all = np.arange(N) / SR
 pad = np.zeros(N)
-for b in range(int(DUR / bar) + 1):
+for b in range(-2, int((DUR - ANCHOR) / bar) + 2):
     ch = chords[b % 4]
-    i0, i1 = int(b * bar * SR), min(N, int((b + 1) * bar * SR) + int(0.3 * SR))
-    tt = np.arange(i1 - i0) / SR
+    start = ANCHOR + b * bar
+    if start + bar <= 0: continue
+    i0, i1 = max(0, int(start * SR)), min(N, int((start + bar) * SR) + int(0.3 * SR))
+    if i0 >= N: break
+    tt = np.arange(i1 - i0) / SR + (i0 / SR - start)
     seg = np.zeros(i1 - i0)
     for m in ch:
         for det in (-0.08, 0.08):
@@ -70,10 +80,9 @@ music[:, 1] += np.roll(pad, 300) * 0.9  # чуть шире стерео
 # Арпеджио-щипок восьмыми — с момента, когда появляется приложение (3.2 с)
 step = BEAT / 2
 k = 0
-t = 3.2
+t = ANCHOR
 while t < 28.6:
-    b = int(t / bar)
-    ch = chords[b % 4]
+    ch = chords[bar_of(t)]
     m = ch[[0, 1, 2, 1, 0, 2, 1, 2][k % 8]] + 24
     n = int(0.35 * SR)
     tt = np.arange(n) / SR
@@ -83,12 +92,13 @@ while t < 28.6:
     t += step; k += 1
 
 # Бас и ударные — после крючка
-for i in range(int(3.2 / BEAT), int(28.8 / BEAT)):
-    tb = i * BEAT
-    b = int(tb / bar)
+for i in range(0, int((28.8 - ANCHOR) / BEAT) + 1):
+    tb = ANCHOR + i * BEAT
+    if tb > 28.8: break
+    b = bar_of(tb)
     # бас: корень на каждую долю, синус с лёгким перегрузом
     n = int(BEAT * SR * 0.9); tt = np.arange(n) / SR
-    s = np.tanh(2.2 * np.sin(2 * np.pi * note(bass_roots[b % 4]) * tt)) * env(n, 0.005, 0.35)
+    s = np.tanh(2.2 * np.sin(2 * np.pi * note(bass_roots[b]) * tt)) * env(n, 0.005, 0.35)
     place(music, tb, s, gain=0.22)
     # бочка: синус с падением частоты
     n = int(0.35 * SR); tt = np.arange(n) / SR
