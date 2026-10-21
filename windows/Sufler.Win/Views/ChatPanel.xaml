@@ -1,0 +1,94 @@
+<UserControl x:Class="Sufler.Views.ChatPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Sufler"
+             x:Name="Root">
+    <UserControl.Resources>
+        <!-- Изменение в базе фактов: что добавлено, заменено или предложено удалить -->
+        <DataTemplate x:Key="OpTemplate">
+            <DockPanel Margin="0,0,0,6">
+                <TextBlock DockPanel.Dock="Left" Style="{StaticResource Icon}" Text="{Binding Op, Converter={StaticResource OpGlyph}}" FontSize="12"
+                           Foreground="{Binding Op, Converter={StaticResource OpBrush}}" VerticalAlignment="Top" Margin="0,2,7,0"/>
+                <StackPanel>
+                    <TextBlock Text="{Binding Old}" TextWrapping="Wrap" FontSize="12.5" Foreground="{StaticResource Second}" TextDecorations="Strikethrough"
+                               Visibility="{Binding Old, Converter={StaticResource Vis}}"/>
+                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="12.5" Visibility="{Binding Text, Converter={StaticResource Vis}}"/>
+                    <TextBlock Text="{Binding Reason}" TextWrapping="Wrap" FontSize="11.5" Foreground="{StaticResource Second}" Margin="0,2,0,0"
+                               Visibility="{Binding Reason, Converter={StaticResource Vis}}"/>
+                </StackPanel>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LineTemplate">
+            <StackPanel x:Name="box" HorizontalAlignment="Left" Margin="0,0,40,8">
+                <Border x:Name="bub" Background="{StaticResource Soft}" CornerRadius="14" Padding="12,8" HorizontalAlignment="Left">
+                    <TextBox Style="{StaticResource Selectable}" Text="{Binding Shown, Mode=OneWay}"/>
+                </Border>
+                <Border Background="{StaticResource Soft}" CornerRadius="10" Padding="10,10,10,4" Margin="0,5,0,0" Visibility="{Binding Ops.Count, Converter={StaticResource Vis}}">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Ops}" ItemTemplate="{StaticResource OpTemplate}" Focusable="False"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,6" Visibility="{Binding OpsPending, Converter={StaticResource Vis}}">
+                            <Button Style="{StaticResource Pill}" Content="Применить" FontSize="12" Padding="12,5" Click="OnApply"/>
+                            <Button Style="{StaticResource PillGray}" Content="Отклонить" FontSize="12" Padding="12,5" Margin="8,0,0,0" Click="OnReject"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <ItemsControl ItemsSource="{Binding Sources}" Margin="6,5,0,0" Focusable="False">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xE8A5;" FontSize="10" Foreground="{StaticResource Second}" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding}" FontSize="11" Foreground="{StaticResource Second}" TextTrimming="CharacterEllipsis" MaxWidth="280"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                    <Setter TargetName="box" Property="HorizontalAlignment" Value="Right"/>
+                    <Setter TargetName="box" Property="Margin" Value="40,0,0,8"/>
+                    <Setter TargetName="bub" Property="Background" Value="{StaticResource AccentSoft}"/>
+                    <Setter TargetName="bub" Property="HorizontalAlignment" Value="Right"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource Soft}" CornerRadius="19" Padding="14,0,6,0" Margin="12" Height="38">
+            <DockPanel>
+                <Button x:Name="SendButton" DockPanel.Dock="Right" Width="28" Height="28" Cursor="Hand" Click="OnSend" FocusVisualStyle="{x:Null}" VerticalAlignment="Center">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Ellipse x:Name="e" Fill="{StaticResource Accent}"/>
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xE74A;" FontSize="12" Foreground="White" FontWeight="Bold"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False"><Setter TargetName="e" Property="Fill" Value="{StaticResource Third}"/></Trigger>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="e" Property="Opacity" Value="0.85"/></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="MicButton" DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE720;" FontSize="15" Margin="0,0,4,0"
+                        Foreground="{StaticResource Second}" Click="OnMic" ToolTip="Задать вопрос голосом"/>
+                <Grid VerticalAlignment="Center" Margin="0,0,8,0">
+                    <TextBlock x:Name="PlaceholderText" Text="{Binding Placeholder, ElementName=Root}" Foreground="{StaticResource Third}" IsHitTestVisible="False" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                    <TextBox x:Name="Input" Style="{StaticResource Plain}" KeyDown="OnKey" TextChanged="OnInput"
+                             Text="{Binding ChatInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </DockPanel>
+        </Border>
+        <ScrollViewer x:Name="Scroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" local:Ui.Wheel="True" Focusable="False">
+            <StackPanel Margin="14,14,8,6">
+                <StackPanel x:Name="HintPanel" Margin="18,56,18,0" Visibility="{Binding Chat.Count, Converter={StaticResource Vis}, ConverterParameter=!}">
+                    <TextBlock Style="{StaticResource Icon}" Text="&#xE8F2;" FontSize="30" Foreground="{StaticResource Third}"/>
+                    <TextBlock Style="{StaticResource HintText}" Text="{Binding Hint, ElementName=Root}" Margin="0,10,0,0"/>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Chat}" ItemTemplate="{StaticResource LineTemplate}" Focusable="False"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

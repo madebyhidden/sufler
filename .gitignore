@@ -1,0 +1,25 @@
+# Сборка и выпуски
+.build/
+dist/
+Sufler.app/
+windows/**/bin/
+windows/**/obj/
+windows/**/out/
+*.dmg
+*.zip
+
+# Модели и готовые движки: скачиваются скриптами, в репозиторий не кладутся
+Models/
+Vendor/whisper.xcframework/
+Vendor/llama-bin/
+
+# Видео и исходники роликов — тяжёлые, лежат в выпусках
+marketing/
+
+# Данные сервера статистики
+server/data/
+
+.DS_Store
+*.user
+.vs/
+.vscode/

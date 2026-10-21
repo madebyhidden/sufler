@@ -1,0 +1,35 @@
+<Window x:Class="Sufler.Views.FeedbackWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отзыв" Width="500" Style="{StaticResource Dialog}" WindowStartupLocation="CenterOwner">
+    <Grid Margin="22,20,22,20">
+        <StackPanel x:Name="Form">
+            <TextBlock Text="Отзыв о Суфлёре" FontSize="18" FontWeight="SemiBold" FontFamily="{StaticResource TitleFont}" Margin="0,0,0,12"/>
+            <Border Background="{StaticResource Soft}" CornerRadius="19" Padding="4" Margin="0,0,0,12">
+                <UniformGrid Columns="3">
+                    <RadioButton x:Name="KindIdea" Style="{StaticResource TabPill}" GroupName="kind" Content="Идея" IsChecked="True" Checked="OnKind"/>
+                    <RadioButton x:Name="KindBug" Style="{StaticResource TabPill}" GroupName="kind" Content="Ошибка" Checked="OnKind"/>
+                    <RadioButton x:Name="KindOther" Style="{StaticResource TabPill}" GroupName="kind" Content="Другое" Checked="OnKind"/>
+                </UniformGrid>
+            </Border>
+            <Grid>
+                <TextBox x:Name="TextBox" Style="{StaticResource Field}" Height="140" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" TextChanged="OnText"/>
+                <TextBlock x:Name="Placeholder" Margin="11,8,11,0" Foreground="{StaticResource Third}" IsHitTestVisible="False" TextWrapping="Wrap" Text="Что добавить или улучшить?"/>
+            </Grid>
+            <TextBlock Text="Как с вами связаться (необязательно)" FontSize="12.5" Foreground="{StaticResource Second}" Margin="0,12,0,4"/>
+            <TextBox x:Name="ContactBox" Style="{StaticResource Field}"/>
+            <CheckBox x:Name="AttachCheck" Content="Приложить версию приложения, Windows и сведения о компьютере" IsChecked="True" Margin="0,12,0,4"/>
+            <TextBlock Text="Тексты встреч, звук и база знаний к отзыву не прикладываются." FontSize="12" Foreground="{StaticResource Second}" Margin="0,0,0,16"/>
+            <DockPanel>
+                <Button x:Name="SendButton" DockPanel.Dock="Right" Style="{StaticResource Pill}" Content="Отправить" IsEnabled="False" Click="OnSend"/>
+                <Button Style="{StaticResource PillGray}" Content="Отмена" HorizontalAlignment="Left" IsCancel="True"/>
+            </DockPanel>
+        </StackPanel>
+        <StackPanel x:Name="Done" Visibility="Collapsed" Margin="0,16">
+            <TextBlock Style="{StaticResource Icon}" Text="&#xE73E;" FontSize="38" Foreground="{StaticResource Good}"/>
+            <TextBlock Text="Спасибо! Отзыв сохранён." FontWeight="SemiBold" FontSize="15" HorizontalAlignment="Center" Margin="0,12,0,6"/>
+            <TextBlock x:Name="DoneNote" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Second}" Margin="0,0,0,16"/>
+            <Button Style="{StaticResource Pill}" Content="Закрыть" HorizontalAlignment="Center" IsDefault="True" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

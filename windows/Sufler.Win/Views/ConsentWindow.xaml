@@ -1,0 +1,38 @@
+<Window x:Class="Sufler.Views.ConsentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Суфлёр" Width="520" Style="{StaticResource Dialog}" WindowStartupLocation="CenterOwner">
+    <Grid>
+    <StackPanel Margin="24,22,24,22">
+        <DockPanel Margin="0,0,0,16">
+            <TextBlock DockPanel.Dock="Left" Style="{StaticResource Icon}" Text="&#xE72E;" FontSize="26" Foreground="{StaticResource Accent}" Margin="0,0,14,0"/>
+            <StackPanel>
+                <TextBlock Text="Помочь сделать Суфлёр лучше?" FontSize="18" FontWeight="SemiBold" FontFamily="{StaticResource TitleFont}"/>
+                <TextBlock Text="Решать вам. Без согласия ничего не отправляется — совсем." Foreground="{StaticResource Second}" Margin="0,2,0,0"/>
+            </StackPanel>
+        </DockPanel>
+        <Border Background="#122EAD5B" CornerRadius="10" Padding="14,12" Margin="0,0,0,10">
+            <StackPanel>
+                <TextBlock Text="Если разрешите, раз в день уйдёт только это:" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,3"><Run Text="✓ " Foreground="{StaticResource Good}"/>случайный номер установки — чтобы понимать, сколько людей пользуется;</TextBlock>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,3"><Run Text="✓ " Foreground="{StaticResource Good}"/>версия приложения, Windows, объём памяти, есть ли видеокарта;</TextBlock>
+                <TextBlock TextWrapping="Wrap"><Run Text="✓ " Foreground="{StaticResource Good}"/>счётчики за день: минуты записи, число встреч, слов, найденных вопросов, токенов модели.</TextBlock>
+            </StackPanel>
+        </Border>
+        <Border Background="#12E5484D" CornerRadius="10" Padding="14,12" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Никогда не отправляется:" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,3"><Run Text="✕ " Foreground="{StaticResource Bad}"/>звук, расшифровки, итоги, заметки, вопросы и ответы;</TextBlock>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,3"><Run Text="✕ " Foreground="{StaticResource Bad}"/>имена, факты, документы и всё из базы знаний;</TextBlock>
+                <TextBlock TextWrapping="Wrap"><Run Text="✕ " Foreground="{StaticResource Bad}"/>что-либо, если вы нажмёте «Не отправлять».</TextBlock>
+            </StackPanel>
+        </Border>
+        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Second}" Margin="0,0,0,18"
+                   Text="Решение можно поменять в любой момент: Настройки → Конфиденциальность. Там же видно, что именно уходит."/>
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Style="{StaticResource Pill}" Content="Разрешить анонимную статистику" Click="OnYes"/>
+            <Button Style="{StaticResource PillGray}" Content="Не отправлять" HorizontalAlignment="Left" Click="OnNo" IsCancel="True"/>
+        </DockPanel>
+    </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,64 @@
+<UserControl x:Class="Sufler.Views.CompactView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Sufler">
+    <!-- Компактный режим: маленькое окно поверх всех — две последние реплики и последний вопрос -->
+    <Grid Background="{StaticResource Page}">
+        <DockPanel Margin="12,10,12,10">
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,9">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button x:Name="MicButton" Style="{StaticResource RoundButton}" Content="&#xE720;" Background="{StaticResource Soft}" Foreground="{StaticResource Second}" Margin="0,0,6,0"
+                            Click="OnMic" Visibility="{Binding IsRecording, Converter={StaticResource Vis}}"/>
+                    <Button x:Name="RecordButton" Style="{StaticResource RoundButton}" Content="&#xE720;" Background="{StaticResource Accent}" Foreground="White" Margin="0,0,6,0"
+                            Click="OnRecord" IsEnabled="{Binding AsrReady}"/>
+                    <Button Style="{StaticResource RoundButton}" Content="&#xE740;" Background="{StaticResource Soft}" Foreground="{StaticResource Second}" Click="OnExpand" ToolTip="Вернуть обычное окно"/>
+                </StackPanel>
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock Text="Суфлёр" FontWeight="SemiBold" Foreground="{StaticResource Second}" Visibility="{Binding IsRecording, Converter={StaticResource Vis}, ConverterParameter=!}"/>
+                    <Border Style="{StaticResource Chip}" Background="#1FE5484D" Visibility="{Binding IsRecording, Converter={StaticResource Vis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource Icon}" Text="&#xE7C8;" FontSize="11" Foreground="{StaticResource Bad}" Margin="0,0,5,0"/>
+                            <TextBlock x:Name="Elapsed" Style="{StaticResource ChipText}" Foreground="{StaticResource Bad}" Text="00:00"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </DockPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                <StackPanel>
+                    <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{StaticResource Second}" Margin="2,2,2,8" Text="Начните запись — здесь появятся последние реплики и вопрос."/>
+                    <ItemsControl x:Name="Lines" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource Soft}" CornerRadius="11" Padding="10,7" Margin="0,0,0,7">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Label}" FontSize="11" FontWeight="SemiBold" Foreground="{Binding VoiceKey, Converter={StaticResource VoiceBrush}}"/>
+                                        <TextBlock Text="{Binding Text, Converter={StaticResource Tail}}" TextWrapping="Wrap" FontSize="13.5" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <!-- Собеседование: уточнение, которое стоит задать сейчас, или следующий вопрос карты -->
+                    <StackPanel x:Name="Interview"/>
+                    <Border x:Name="PendingCard" Background="{StaticResource AccentFaint}" CornerRadius="11" Padding="10" Visibility="{Binding PendingQuestion, Converter={StaticResource Vis}}">
+                        <TextBlock TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold"><Run Text="{Binding PendingQuestion, Mode=OneWay}"/><Run Text=" ▍" Foreground="{StaticResource Accent}"/></TextBlock>
+                    </Border>
+                    <Border x:Name="QuestionCard" Background="{StaticResource AccentFaint}" BorderBrush="{StaticResource AccentLine}" BorderThickness="1" CornerRadius="11" Padding="10" Visibility="Collapsed">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,6">
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding TimeText}" FontSize="11" Foreground="{StaticResource Third}" VerticalAlignment="Center"/>
+                                <WrapPanel>
+                                    <TextBlock x:Name="ForMe" Text="К ВАМ" FontSize="11" FontWeight="Bold" Foreground="{StaticResource Alert}" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed"/>
+                                    <Border Style="{StaticResource Chip}" Visibility="{Binding Addressee, Converter={StaticResource Vis}}"><TextBlock Style="{StaticResource ChipText}" Text="{Binding AddresseeText}"/></Border>
+                                    <Border Style="{StaticResource Chip}" Visibility="{Binding Asker, Converter={StaticResource Vis}}"><TextBlock Style="{StaticResource ChipText}" Text="{Binding AskerText}"/></Border>
+                                </WrapPanel>
+                            </DockPanel>
+                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Second}" Margin="0,5,0,0" Visibility="{Binding Topic, Converter={StaticResource Vis}}"><Run Text="Тема: "/><Run Text="{Binding Topic, Mode=OneWay}"/></TextBlock>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>

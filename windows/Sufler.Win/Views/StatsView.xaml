@@ -1,0 +1,63 @@
+<UserControl x:Class="Sufler.Views.StatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Sufler">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel Margin="22,16,22,22">
+            <TextBlock Text="Статистика" FontSize="22" FontWeight="SemiBold" FontFamily="{StaticResource TitleFont}"/>
+            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource Second}" Margin="0,4,0,14"
+                       Text="Всё посчитано на этом компьютере. Наружу ничего не уходит, если вы не разрешили отправку анонимной статистики."/>
+            <ItemsControl x:Name="Tiles" Focusable="False">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Style="{StaticResource Card}" Margin="0,0,12,12">
+                            <StackPanel Margin="16,14">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Icon}" Text="{Binding Glyph}" FontSize="12" Foreground="{StaticResource Second}" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="Medium" Foreground="{StaticResource Second}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding Value}" FontSize="26" FontWeight="SemiBold" FontFamily="{StaticResource TitleFont}" Margin="0,4,0,2"/>
+                                <TextBlock Text="{Binding Note}" FontSize="12" Foreground="{StaticResource Third}" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </ContentControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ContentControl Style="{StaticResource Card}" Margin="0,0,12,12">
+                <StackPanel Margin="16,14">
+                    <TextBlock Text="Активность за 30 дней — минуты записи" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <ItemsControl x:Name="Bars" Height="150" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Height="{Binding Height}" VerticalAlignment="Bottom" Margin="2,0" CornerRadius="3,3,0,0" Background="{StaticResource Accent}" ToolTip="{Binding Tip}" MinHeight="2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock x:Name="LastDay" DockPanel.Dock="Right" FontSize="11" Foreground="{StaticResource Third}"/>
+                        <TextBlock x:Name="FirstDay" FontSize="11" Foreground="{StaticResource Third}"/>
+                    </DockPanel>
+                    <TextBlock x:Name="ChartNote" FontSize="12" Foreground="{StaticResource Second}" Margin="0,8,0,0"/>
+                </StackPanel>
+            </ContentControl>
+
+            <ContentControl Style="{StaticResource Card}" Margin="0,0,12,0">
+                <DockPanel Margin="16,14">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource PillGray}" Content="Настройки" FontSize="12" Padding="12,6" VerticalAlignment="Center" Click="OnPrivacy"/>
+                    <TextBlock x:Name="PrivacyIcon" DockPanel.Dock="Left" Style="{StaticResource Icon}" Text="&#xE72E;" FontSize="22" Foreground="{StaticResource Accent}" Margin="0,0,14,0"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="PrivacyTitle" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="PrivacyNote" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Second}" Margin="0,2,12,0"/>
+                    </StackPanel>
+                </DockPanel>
+            </ContentControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

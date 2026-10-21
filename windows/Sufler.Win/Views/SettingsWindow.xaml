@@ -1,0 +1,297 @@
+<Window x:Class="Sufler.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Настройки" Width="840" Height="620" Style="{StaticResource Dialog}" SizeToContent="Manual" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <!-- Раздел слева: значок в цветном квадрате и название, как в системных настройках -->
+        <Style x:Key="NavItem" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="b" Background="Transparent" CornerRadius="8" Padding="8,6">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="24" Height="24" CornerRadius="6" Background="{TemplateBinding Background}" Margin="0,0,10,0">
+                                    <TextBlock Text="{TemplateBinding Tag}" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="{StaticResource Soft}"/></Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="{StaticResource AccentSoft}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Группа настроек: белая карточка, строки разделены тонкой линией -->
+        <Style x:Key="Group" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,4"/>
+            <Setter Property="Margin" Value="0,0,0,18"/>
+        </Style>
+        <Style x:Key="GroupTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource Second}"/>
+            <Setter Property="Margin" Value="4,0,0,6"/>
+        </Style>
+        <Style x:Key="Row" TargetType="DockPanel">
+            <Setter Property="Margin" Value="0,9"/>
+            <Setter Property="LastChildFill" Value="True"/>
+        </Style>
+        <Style x:Key="Sep" TargetType="Border">
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Background" Value="{StaticResource Line}"/>
+        </Style>
+        <Style x:Key="Note" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource Second}"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="{StaticResource TitleFont}"/>
+            <Setter Property="Margin" Value="4,0,0,14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Разделы -->
+        <Border Background="{StaticResource Side}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+            <DockPanel Margin="10,16,10,14">
+                <Button DockPanel.Dock="Bottom" Style="{StaticResource Pill}" Content="Готово" IsDefault="True" Click="OnDone"/>
+                <StackPanel>
+                    <TextBlock Text="Настройки" FontSize="15" FontWeight="SemiBold" Margin="8,0,0,12"/>
+                    <RadioButton x:Name="NavGeneral" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE713;" Background="#8E8E93" Content="Основное" IsChecked="True" Checked="OnNav"/>
+                    <RadioButton x:Name="NavRecording" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE7C8;" Background="#E5484D" Content="Запись" Checked="OnNav"/>
+                    <RadioButton x:Name="NavSpeech" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE8D6;" Background="#F0932B" Content="Распознавание" Checked="OnNav"/>
+                    <RadioButton x:Name="NavModels" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE950;" Background="#3B82F6" Content="Модели" Checked="OnNav"/>
+                    <RadioButton x:Name="NavPrivacy" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE72E;" Background="#5C57EB" Content="Конфиденциальность" Checked="OnNav"/>
+                    <RadioButton x:Name="NavAbout" Style="{StaticResource NavItem}" GroupName="nav" Tag="&#xE896;" Background="#2EAD5B" Content="Обновления и отзыв" Checked="OnNav"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Background="{StaticResource Page}">
+            <!-- Основное -->
+            <ScrollViewer x:Name="PageGeneral" VerticalScrollBarVisibility="Auto" Focusable="False">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Основное"/>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="РЕЖИМ"/>
+                    <Border Style="{StaticResource Group}" Padding="16,12">
+                        <StackPanel>
+                            <Border Background="{StaticResource Soft}" CornerRadius="19" Padding="4" Margin="0,0,0,8">
+                                <UniformGrid Columns="2">
+                                    <RadioButton x:Name="ModeClassic" Style="{StaticResource TabPill}" GroupName="mode" Content="Суфлёр встреч" Checked="OnMode"/>
+                                    <RadioButton x:Name="ModeInterview" Style="{StaticResource TabPill}" GroupName="mode" Content="Суфлёр собеседований" Checked="OnMode"/>
+                                </UniformGrid>
+                            </Border>
+                            <TextBlock x:Name="ModeNote" Style="{StaticResource Note}" Margin="2,0,0,0"/>
+                            <StackPanel x:Name="DeepPanel" Margin="0,12,0,0">
+                                <Border Style="{StaticResource Sep}" Margin="0,0,0,12"/>
+                                <TextBlock Text="Глубокая модель для подготовки и оценки" FontWeight="Medium" Margin="0,0,0,5"/>
+                                <DockPanel>
+                                    <Button x:Name="DeepButton" DockPanel.Dock="Right" Style="{StaticResource PillGray}" FontSize="12" Padding="10,5" Margin="10,0,0,0" Click="OnDeepDownload" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="DeepNote" Style="{StaticResource Note}" Margin="0"/>
+                                </DockPanel>
+                                <ProgressBar x:Name="DeepBar" Height="5" Margin="0,8,0,0" Maximum="1" Visibility="Collapsed" Foreground="{StaticResource Accent}" Background="{StaticResource Soft}" BorderThickness="0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="О ВАС"/>
+                    <Border Style="{StaticResource Group}" Padding="16,12">
+                        <StackPanel>
+                            <TextBlock Text="Моё имя" FontWeight="Medium" Margin="0,0,0,5"/>
+                            <TextBox x:Name="NameBox" Style="{StaticResource Field}" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource Note}" Margin="0" Text="Имя, фамилия и то, как вас называют, — через запятую: Денис, Денис Иванов, Ден. Когда вопрос обращён к вам, карточка выделяется цветом и приходит уведомление."/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ИМЕНА И ТЕРМИНЫ"/>
+                    <Border Style="{StaticResource Group}" Padding="16,12">
+                        <StackPanel>
+                            <TextBox x:Name="GlossaryBox" Style="{StaticResource Field}" Height="64" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource Note}" Margin="0" Text="Имена коллег, названия проектов — через запятую. Помогает понимать, к кому обращён вопрос."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Запись -->
+            <ScrollViewer x:Name="PageRecording" VerticalScrollBarVisibility="Auto" Focusable="False" Visibility="Collapsed">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Запись"/>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ЧТО ЗАПИСЫВАТЬ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}"><CheckBox x:Name="MicCheck" Content="Микрофон"/></DockPanel>
+                            <Border Style="{StaticResource Sep}"/>
+                            <DockPanel Style="{StaticResource Row}"><CheckBox x:Name="SystemCheck" Content="Звук компьютера (собеседники в звонке)"/></DockPanel>
+                            <Border Style="{StaticResource Sep}"/>
+                            <DockPanel Style="{StaticResource Row}">
+                                <ComboBox x:Name="StopBox" DockPanel.Dock="Right" Width="140" Padding="8,4">
+                                    <ComboBoxItem Content="Никогда" Tag="0"/>
+                                    <ComboBoxItem Content="3 минуты" Tag="3"/>
+                                    <ComboBoxItem Content="5 минут" Tag="5"/>
+                                    <ComboBoxItem Content="10 минут" Tag="10"/>
+                                    <ComboBoxItem Content="20 минут" Tag="20"/>
+                                    <ComboBoxItem Content="30 минут" Tag="30"/>
+                                </ComboBox>
+                                <TextBlock Text="Останавливать запись после тишины" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ЗВУК ВСТРЕЧ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}"><CheckBox x:Name="AudioCheck" Content="Сохранять звук, чтобы переслушивать реплики"/></DockPanel>
+                            <TextBlock Style="{StaticResource Note}" Text="Хранится только на этом компьютере, около 11 МБ на час речи; записи старше 30 дней удаляются сами."/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="НАЧАЛО ЗВОНКА"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}"><CheckBox x:Name="CallsCheck" Content="Предлагать запись, когда начинается звонок"/></DockPanel>
+                            <TextBox x:Name="AppsBox" Style="{StaticResource Field}" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource Note}" Text="Когда одно из этих приложений включает микрофон, Суфлёр покажет уведомление. Для звонков в браузере достаточно названия браузера."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Распознавание -->
+            <ScrollViewer x:Name="PageSpeech" VerticalScrollBarVisibility="Auto" Focusable="False" Visibility="Collapsed">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Распознавание"/>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="МОДЕЛЬ РЕЧИ"/>
+                    <Border Style="{StaticResource Group}">
+                        <DockPanel Style="{StaticResource Row}">
+                            <ComboBox x:Name="AsrBox" DockPanel.Dock="Right" Width="320" Padding="8,5">
+                                <ComboBoxItem Content="GigaAM v3 — русский, любой компьютер" Tag="giga"/>
+                                <ComboBoxItem Content="Whisper — любой язык, нужна видеокарта" Tag="whisper"/>
+                            </ComboBox>
+                            <TextBlock Text="Распознавание речи" VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="СЛОВАРЬ ИСПРАВЛЕНИЙ"/>
+                    <Border Style="{StaticResource Group}" Padding="16,12">
+                        <StackPanel>
+                            <TextBox x:Name="CorrectionsBox" Style="{StaticResource Field}" Height="120" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource Note}" Margin="0" Text="Строки вида «как услышано = как правильно». Пополняется сам, когда вы исправляете названия после встречи, и применяется сразу при распознавании."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Модели -->
+            <ScrollViewer x:Name="PageModels" VerticalScrollBarVisibility="Auto" Focusable="False" Visibility="Collapsed">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Модели"/>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ЯЗЫКОВАЯ МОДЕЛЬ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}">
+                                <ComboBox x:Name="ModelBox" DockPanel.Dock="Right" Width="320" Padding="8,5" SelectionChanged="OnModelPicked">
+                                    <ComboBoxItem Content="Gemma 4 E4B — нужна видеокарта" Tag="e4b"/>
+                                    <ComboBoxItem Content="Gemma 4 E2B — лёгкая, для ноутбуков" Tag="e2b"/>
+                                    <ComboBoxItem x:Name="CustomItem" Content="Своя модель GGUF…" Tag="custom"/>
+                                </ComboBox>
+                                <TextBlock Text="Вопросы, итоги, чат" VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <TextBlock x:Name="ModelNote" Style="{StaticResource Note}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ФАЙЛЫ МОДЕЛЕЙ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource PillGray}" Content="Открыть…" FontSize="12" Padding="12,5" Click="OnSetup"/>
+                                <TextBlock Text="Скачать или удалить модели, проверить готовность" VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <Border Style="{StaticResource Sep}"/>
+                            <DockPanel Style="{StaticResource Row}">
+                                <Button x:Name="DiagButton" DockPanel.Dock="Right" Style="{StaticResource PillGray}" Content="Скопировать замеры" FontSize="12" Padding="12,5" Click="OnDiag"/>
+                                <TextBlock Text="Скорость работы на этом компьютере" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Конфиденциальность -->
+            <ScrollViewer x:Name="PagePrivacy" VerticalScrollBarVisibility="Auto" Focusable="False" Visibility="Collapsed">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Конфиденциальность"/>
+                    <Border Style="{StaticResource Group}" Padding="16,12">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource Icon}" Text="&#xE72E;" FontSize="20" Foreground="{StaticResource Accent}" Margin="0,0,12,0" VerticalAlignment="Top"/>
+                            <TextBlock TextWrapping="Wrap" Text="Звук, расшифровки, итоги, база знаний и модели — только на этом компьютере. Распознавание и ответы работают без интернета."/>
+                        </DockPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="АНОНИМНАЯ СТАТИСТИКА"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}"><CheckBox x:Name="TelemetryCheck" Content="Отправлять анонимную статистику"/></DockPanel>
+                            <TextBlock Style="{StaticResource Note}" Text="Раз в день — только счётчики: минуты записи, число встреч, слов, вопросов, токенов модели; версия приложения и Windows; случайный номер установки. Никогда — тексты, звук, имена и база знаний."/>
+                            <TextBlock x:Name="ChannelNote" Style="{StaticResource Note}" Foreground="{StaticResource Warn}" Text="В этой версии канал отправки ещё не подключён — даже с согласием ничего не уходит."/>
+                            <Expander Header="Что именно отправится" Margin="0,0,0,10">
+                                <TextBox x:Name="PayloadBox" IsReadOnly="True" FontFamily="Consolas" FontSize="11.5" TextWrapping="Wrap" BorderThickness="0" Background="{StaticResource Soft}" Padding="8" Margin="0,6,0,0" MaxHeight="220" VerticalScrollBarVisibility="Auto"/>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ДАННЫЕ"/>
+                    <Border Style="{StaticResource Group}">
+                        <DockPanel Style="{StaticResource Row}">
+                            <Button DockPanel.Dock="Right" Style="{StaticResource PillGray}" Content="Открыть папку" FontSize="12" Padding="12,5" Click="OnDataFolder"/>
+                            <TextBlock x:Name="DataPath" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Обновления и отзыв -->
+            <ScrollViewer x:Name="PageAbout" VerticalScrollBarVisibility="Auto" Focusable="False" Visibility="Collapsed">
+                <StackPanel Margin="24,20,24,20">
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Обновления и отзыв"/>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ВЕРСИЯ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource PillGray}" Content="Проверить обновления" FontSize="12" Padding="12,5" Click="OnCheckUpdate"/>
+                                <TextBlock x:Name="VersionText" VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <TextBlock x:Name="UpdateNote" Style="{StaticResource Note}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource GroupTitle}" Text="ОБРАТНАЯ СВЯЗЬ"/>
+                    <Border Style="{StaticResource Group}">
+                        <StackPanel>
+                            <DockPanel Style="{StaticResource Row}">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource Pill}" Content="Написать…" FontSize="12" Padding="14,5" Click="OnFeedback"/>
+                                <TextBlock Text="Идея, ошибка или пожелание" VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <TextBlock x:Name="PendingNote" Style="{StaticResource Note}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

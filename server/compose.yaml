@@ -1,0 +1,12 @@
+# Приёмник анонимной статистики и отзывов «Суфлёра». Данные — в /DATA/AppData/sufler-stats
+services:
+  sufler-stats:
+    image: python:3.12-alpine
+    container_name: sufler-stats
+    restart: unless-stopped
+    command: ["python", "-u", "/app/collector.py"]
+    volumes:
+      - /DATA/AppData/sufler-stats/app:/app:ro
+      - /DATA/AppData/sufler-stats/data:/data
+    ports:
+      - "8090:8080"
