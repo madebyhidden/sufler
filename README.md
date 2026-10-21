@@ -16,6 +16,9 @@
 
 <img src="docs/images/question.png" width="860" alt="Карточка «Вопрос к вам» во время звонка">
 
+<a href="docs/video/sufler-reels.mp4"><img src="docs/images/reels-cover.png" width="200" alt="Ролик о Суфлёре"></a><br>
+<sub>▶ <a href="docs/video/sufler-reels.mp4">Ролик на 33 секунды</a></sub>
+
 </div>
 
 ## Зачем
